@@ -34,10 +34,19 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     const newNote = req.body
     newNote.id = uuidv4()
-    const allNotes = JSON.parse(fs.readFileSync(path.join(__dirname, '/db/db.json', 'utf8')))
+    const allNotes = JSON.parse(fs.readFileSync(path.join(__dirname, '/db/db.json'), 'utf8'))
     allNotes.push(newNote)
-    fs.writeFileSync(path.join(__dirname, '/db/db.json', JSON.stringify(allNotes)))
+    fs.writeFileSync(path.join(__dirname, '/db/db.json'), JSON.stringify(allNotes))
     res.sendStatus(200)
+})
+
+app.delete('/api/notes/:id', (req,res) => {
+    const noteId = req.params.id
+    let Notes = JSON.parse(fs.readFileSync(path.join(__dirname, '/db/db.json'), 'utf8'))
+    Notes = Notes.filter(note => note.id != noteId)
+    fs.writeFileSync(path.join(__dirname, '/db/db.json'), JSON.stringify(Notes))
+    res.status(200).send(Notes)
+
 })
 
 app.listen(PORT, () => {
